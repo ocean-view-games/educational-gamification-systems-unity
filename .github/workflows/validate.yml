@@ -110,13 +110,21 @@ jobs:
           fi
           exit "$status"
 
-      - name: Check Samples~ carries no .meta files
+      - name: Check tilde folders carry no .meta files
         run: |
           set -euo pipefail
+          status=0
+
           # A tilde folder is invisible to Unity, so meta files there are stale noise
-          # that get imported with a fresh GUID when the sample is copied into Assets.
-          if find 'Samples~' -name '*.meta' -print -quit 2>/dev/null | grep -q .; then
-            echo "Samples~ must not contain .meta files"
-            exit 1
-          fi
-          echo "ok"
+          # that get imported with a fresh GUID when the contents are copied into
+          # Assets. Covers Samples~, Tools~, and any tilde folder added later.
+          while read -r dir; do
+            if find "$dir" -name '*.meta' -print -quit | grep -q .; then
+              echo "$dir must not contain .meta files"
+              status=1
+            else
+              echo "ok  $dir"
+            fi
+          done < <(find . -maxdepth 1 -type d -name '*~')
+
+          exit "$status"

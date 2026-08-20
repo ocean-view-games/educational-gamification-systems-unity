@@ -143,7 +143,17 @@ The test assembly is constrained to `UNITY_INCLUDE_TESTS`, so it compiles in thi
 
 ### Running the tests headlessly
 
-The suite also runs without opening the Editor, which is how the results quoted above are produced:
+On Windows, [Tools~/verify.ps1](Tools~/verify.ps1) does the whole job:
+
+```powershell
+.\Tools~\verify.ps1
+```
+
+It assembles a throwaway project that installs this package as a dependency, copies the samples in so they are compiled too, runs the Play Mode suite in batch mode, and prints a pass/fail summary, exiting non-zero on failure. The scratch project is reused between runs so Unity's `Library` cache survives; pass `-Clean` to force a full reimport, or `-UnityVersion 6000.0.73f1` to pin an editor rather than taking the newest installed.
+
+Compiling the samples is part of the point: they live in `Samples~`, which Unity ignores, so nothing else would catch one drifting out of sync with the runtime API.
+
+The underlying command, for other platforms or for CI of your own:
 
 ```
 Unity.exe -batchmode -nographics \

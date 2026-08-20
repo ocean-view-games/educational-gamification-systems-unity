@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   licence, so it runs on forks and on external pull requests.
 - Documented command for running the Play Mode suite headlessly against a consuming
   project, so the published test results can be reproduced without the Editor.
+- `Tools~/verify.ps1`, which assembles that consuming project, copies the samples into
+  it so they are compiled, runs the suite, and reports pass/fail. Compiling the samples
+  is the only check that catches one drifting out of sync with the runtime API, since
+  `Samples~` is invisible to Unity in normal use.
 - `AdaptiveDifficultyController` now warns once if both `Evaluate` and
   `EvaluateForObjective` adjust difficulty on the same instance. The two modes track
   consumed attempts separately, so mixing them moves difficulty at twice the configured
