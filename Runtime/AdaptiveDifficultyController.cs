@@ -129,6 +129,15 @@ namespace OceanViewGames.EdTech
         // interval, so warning on every call floods the player log from Update.
         private bool _missingTrackerLogged;
 
+        // Records which evaluation mode has actually consumed attempts. Mixing the two
+        // applies the same attempts twice, and the symptom — difficulty moving at double
+        // the configured step — is easy to misread as a badly tuned adjustment step. These
+        // are deliberately never reset: the invariant is one mode per controller instance
+        // for its whole lifetime, so a new session does not make mixing acceptable.
+        private bool _globalEvaluationUsed;
+        private bool _objectiveEvaluationUsed;
+        private bool _mixedEvaluationLogged;
+
         /// <summary>
         /// Current difficulty as a continuous value between 0 (easiest) and 1 (hardest).
         /// </summary>
@@ -205,6 +214,33 @@ namespace OceanViewGames.EdTech
         private float EffectiveDecreaseThreshold => Mathf.Min(_decreaseThreshold, _increaseThreshold);
 
         /// <summary>
+        /// Warns the first time both evaluation modes have consumed attempts on this
+        /// controller, since from that point on shared attempts are applied twice.
+        /// </summary>
+        /// <remarks>
+        /// This warns rather than throwing or ignoring the second mode. Refusing the call
+        /// would change the difficulty a shipped game arrives at, and silently dropping it
+        /// would hide the mistake entirely; neither is a good trade for a component that
+        /// runs in front of children mid-lesson. The warning is latched because the fault
+        /// is in the calling code's shape, not in any one call, so repeating it once per
+        /// evaluation would flood the player log without adding information.
+        /// </remarks>
+        private void WarnIfEvaluationModesMixed()
+        {
+            if (_mixedEvaluationLogged || !_globalEvaluationUsed || !_objectiveEvaluationUsed)
+                return;
+
+            _mixedEvaluationLogged = true;
+
+            Debug.LogWarning(
+                "[AdaptiveDifficultyController] Both Evaluate() and EvaluateForObjective() have " +
+                "adjusted difficulty on this controller. They track consumed attempts separately, " +
+                "so attempts counted by both move difficulty at twice the configured step. Pick one " +
+                "mode per controller instance, and use a controller per objective if objectives need " +
+                "independent difficulty.", this);
+        }
+
+        /// <summary>
         /// Logs once at startup if the authored thresholds are inverted, since the
         /// collapsed window silently ignores the configured decrease threshold.
         /// </summary>
@@ -229,7 +265,8 @@ namespace OceanViewGames.EdTech
         /// attempts it has already consumed independently of
         /// <see cref="EvaluateForObjective"/>, so calling both on the same controller
         /// applies the same attempts twice and moves difficulty at double the configured
-        /// step. Pick one mode per controller instance.
+        /// step. Pick one mode per controller instance. If both modes do adjust difficulty
+        /// on one controller, a warning is logged once identifying the mistake.
         /// </remarks>
         public void Evaluate()
         {
@@ -249,6 +286,8 @@ namespace OceanViewGames.EdTech
                 return;
 
             _lastGlobalEvaluationSequence = latestSequence;
+            _globalEvaluationUsed = true;
+            WarnIfEvaluationModesMixed();
             AdjustDifficulty(recentAccuracy);
         }
 
@@ -262,6 +301,8 @@ namespace OceanViewGames.EdTech
         /// attempts it has already consumed independently of <see cref="Evaluate"/>, so
         /// calling both on the same controller applies the same attempts twice and moves
         /// difficulty at double the configured step. Pick one mode per controller instance.
+        /// If both modes do adjust difficulty on one controller, a warning is logged once
+        /// identifying the mistake.
         /// </remarks>
         /// <param name="objectiveId">The curriculum code of the objective to evaluate.</param>
         public void EvaluateForObjective(string objectiveId)
@@ -287,6 +328,8 @@ namespace OceanViewGames.EdTech
                 if (attempts[i].correct) correct++;
 
             _lastObjectiveEvaluationSequences[objectiveId] = latestSequence;
+            _objectiveEvaluationUsed = true;
+            WarnIfEvaluationModesMixed();
             AdjustDifficulty((float)correct / (attempts.Count - start));
         }
 

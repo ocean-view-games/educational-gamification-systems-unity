@@ -367,6 +367,92 @@ namespace OceanViewGames.EdTech.Tests
             Assert.That(controller.CurrentDifficulty, Is.EqualTo(afterFirstEvaluation).Within(0.0001f));
         }
 
+        // -- Evaluation mode guard -------------------------------------------
+
+        [Test]
+        public void MixingEvaluationModes_Warns()
+        {
+            var tracker = NewTracker("A");
+            var controller = NewController(tracker);
+            Record(tracker, "A", 10, 0);
+
+            controller.Evaluate();
+            controller.EvaluateForObjective("A");
+
+            LogAssert.Expect(LogType.Warning, new Regex("Both Evaluate\\(\\) and EvaluateForObjective\\(\\)"));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [Test]
+        public void MixingEvaluationModes_WarnsOnlyOnce()
+        {
+            var tracker = NewTracker("A");
+            var controller = NewController(tracker);
+            Record(tracker, "A", 10, 0);
+
+            controller.Evaluate();
+            controller.EvaluateForObjective("A");
+
+            // Fresh attempts, so both modes have new evidence to consume and would warn
+            // again were the warning not latched.
+            Record(tracker, "A", 10, 0);
+            controller.Evaluate();
+            controller.EvaluateForObjective("A");
+
+            LogAssert.Expect(LogType.Warning, new Regex("Both Evaluate\\(\\) and EvaluateForObjective\\(\\)"));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [Test]
+        public void MixingEvaluationModes_StillAdjustsDifficulty()
+        {
+            var tracker = NewTracker("A");
+            var controller = NewController(tracker);
+            Record(tracker, "A", 10, 0);
+
+            controller.Evaluate();
+            float afterGlobalEvaluation = controller.CurrentDifficulty;
+            controller.EvaluateForObjective("A");
+
+            // The guard reports the mistake without changing what the game does, so a
+            // shipped build does not land on a different difficulty than it did before.
+            Assert.Greater(controller.CurrentDifficulty, afterGlobalEvaluation,
+                "the second mode should still apply its adjustment");
+
+            LogAssert.Expect(LogType.Warning, new Regex("Both Evaluate\\(\\) and EvaluateForObjective\\(\\)"));
+        }
+
+        [Test]
+        public void SingleEvaluationMode_DoesNotWarn()
+        {
+            var tracker = NewTracker("A");
+            var controller = NewController(tracker);
+
+            for (int i = 0; i < 3; i++)
+            {
+                Record(tracker, "A", 10, 0);
+                controller.Evaluate();
+            }
+
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [Test]
+        public void SingleObjectiveEvaluationMode_AcrossObjectives_DoesNotWarn()
+        {
+            var tracker = NewTracker("A", "B");
+            var controller = NewController(tracker);
+            Record(tracker, "A", 10, 0);
+            Record(tracker, "B", 10, 0);
+
+            // Several objectives driven through the same mode is the documented usage,
+            // not mixing, so it must stay silent.
+            controller.EvaluateForObjective("A");
+            controller.EvaluateForObjective("B");
+
+            LogAssert.NoUnexpectedReceived();
+        }
+
         // -- Reset -----------------------------------------------------------
 
         [Test]

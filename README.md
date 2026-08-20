@@ -106,6 +106,7 @@ Worth knowing before you build on this:
 - **Bounded raw history.** The tracker retains the latest 1,000 raw attempt records per objective by default, configurable in the Inspector. Lifetime counts, accuracy, mastery, and average response time remain aggregated across the complete session after older raw records roll out.
 - **No networking.** The tracker produces JSON; it does not transmit it. Delivering the report to an LMS is left to your own transport layer, so you can meet whatever authentication and endpoint requirements the school's platform imposes.
 - **Single student per tracker.** One tracker instance represents one student's session. Use `StartSession` to hand over between students; any connected `AdaptiveDifficultyController` resets to its configured initial difficulty immediately.
+- **One evaluation mode per controller.** `Evaluate()` and `EvaluateForObjective()` track consumed attempts separately, so driving a single controller with both applies shared attempts twice and moves difficulty at twice the configured step. Pick one per controller instance, and add a controller per objective if objectives need independent difficulty. The controller warns once if it detects both being used.
 - **Handle student data carefully.** Reports contain an identifier plus aggregated correctness and response-time statistics. In UK schools that is personal data about children. **Pass a pseudonymous token to `StartSession`, never a child's name.** Response-time data in particular supports inferences well beyond the objective being measured, so retention limits, access controls, and what the school has told parents are decisions to settle before deployment — not defaults this library can set for you.
 
 ## Mastery levels
@@ -122,7 +123,7 @@ Mastery is assessed against each objective's configurable `masteryThreshold` (T,
 
 ## Tests
 
-89 Play Mode test cases covering mastery banding, session handling, bounded history, report generation, difficulty adjustment, component lifecycle, event wiring, defensive snapshots, and input guards live in [Tests/Runtime/](Tests/Runtime/).
+94 Play Mode test cases covering mastery banding, session handling, bounded history, report generation, difficulty adjustment, evaluation mode misuse, component lifecycle, event wiring, defensive snapshots, and input guards live in [Tests/Runtime/](Tests/Runtime/).
 
 Open **Window > General > Test Runner**, select the **PlayMode** tab, and run them. They are Play Mode rather than Edit Mode tests because both components rely on `Awake`, which Unity only invokes on `AddComponent` while playing.
 

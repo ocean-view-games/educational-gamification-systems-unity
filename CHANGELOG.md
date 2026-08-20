@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   licence, so it runs on forks and on external pull requests.
 - Documented command for running the Play Mode suite headlessly against a consuming
   project, so the published test results can be reproduced without the Editor.
+- `AdaptiveDifficultyController` now warns once if both `Evaluate` and
+  `EvaluateForObjective` adjust difficulty on the same instance. The two modes track
+  consumed attempts separately, so mixing them moves difficulty at twice the configured
+  step; that was previously documented but undetectable at runtime. Behaviour is
+  otherwise unchanged — the adjustment still applies, so no existing build lands on a
+  different difficulty.
 
 ## [1.0.0] - 2026-08-20
 
