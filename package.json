@@ -1,0 +1,28 @@
+{
+  "name": "uk.co.oceanviewgames.edtech",
+  "version": "1.0.0",
+  "displayName": "Educational Gamification Systems",
+  "description": "Curriculum-aligned learning outcome tracking and adaptive difficulty for Unity educational games. Built and maintained by Ocean View Games.",
+  "unity": "2021.3",
+  "license": "MIT",
+  "licensesUrl": "https://github.com/Ocean-View-Games/educational-gamification-systems-unity/blob/main/LICENSE",
+  "changelogUrl": "https://github.com/Ocean-View-Games/educational-gamification-systems-unity/blob/main/CHANGELOG.md",
+  "documentationUrl": "https://github.com/Ocean-View-Games/educational-gamification-systems-unity/blob/main/docs/architecture.md",
+  "author": {
+    "name": "Ocean View Games",
+    "url": "https://oceanviewgames.co.uk"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ocean-View-Games/educational-gamification-systems-unity.git"
+  },
+  "keywords": [
+    "education",
+    "edtech",
+    "serious-games",
+    "gamification",
+    "learning-analytics",
+    "curriculum",
+    "adaptive-difficulty"
+  ]
+}

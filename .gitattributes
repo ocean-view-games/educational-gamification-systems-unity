@@ -1,0 +1,46 @@
+# Normalise every text file to LF in the repository. Working copies still get
+# native line endings when core.autocrlf is set, so Windows editors are happy
+# while the committed blobs stay identical across machines.
+* text=auto
+
+# Unity source and metadata. Spelled out rather than left to auto-detection:
+# a .meta file whose line endings drift produces a spurious diff on every
+# machine that touches it, and asmdef/json are parsed by Unity directly.
+*.cs        text diff=csharp
+*.meta      text
+*.asmdef    text
+*.asmref    text
+*.json      text
+*.md        text
+*.txt       text
+*.yml       text
+*.yaml      text
+
+# Unity YAML assets. Mergeable only via UnityYAMLMerge; without this Git will
+# happily produce a corrupt scene or prefab on conflict.
+*.unity     text merge=unityyamlmerge eol=lf
+*.prefab    text merge=unityyamlmerge eol=lf
+*.asset     text merge=unityyamlmerge eol=lf
+*.mat       text merge=unityyamlmerge eol=lf
+*.anim      text merge=unityyamlmerge eol=lf
+*.controller text merge=unityyamlmerge eol=lf
+*.physicMaterial text merge=unityyamlmerge eol=lf
+
+# Binaries. None are committed today, but auto-detection has been known to
+# mangle a stray asset dropped in later.
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.psd       binary
+*.fbx       binary
+*.wav       binary
+*.mp3       binary
+*.ogg       binary
+*.ttf       binary
+*.otf       binary
+*.dll       binary
+*.so        binary
+*.dylib     binary
+*.a         binary
+*.unitypackage binary
