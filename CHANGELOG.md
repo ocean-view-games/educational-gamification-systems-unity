@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-08-20
+
 ### Changed
 
 - **Minimum supported editor raised to Unity 6000.0.73f1** (from 2021.3). The package
@@ -69,5 +71,6 @@ First public release. Earlier versions were internal and are not documented here
 - `CONTRIBUTING.md` and `SECURITY.md`, including a private vulnerability
   reporting route and guidance on handling learner data.
 
-[Unreleased]: https://github.com/Ocean-View-Games/educational-gamification-systems-unity/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/Ocean-View-Games/educational-gamification-systems-unity/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/Ocean-View-Games/educational-gamification-systems-unity/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/Ocean-View-Games/educational-gamification-systems-unity/releases/tag/v1.0.0
