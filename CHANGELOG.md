@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   student answers across three curriculum objectives while an on-screen readout shows
   accuracy, mastery level, and the difficulty the controller settles on. Requires no
   scene setup or assets beyond a single script.
+- Continuous integration workflow covering package metadata, assembly definition
+  validity, declared sample paths, and `.meta` file consistency. It needs no Unity
+  licence, so it runs on forks and on external pull requests.
+- Documented command for running the Play Mode suite headlessly against a consuming
+  project, so the published test results can be reproduced without the Editor.
 
 ## [1.0.0] - 2026-08-20
 

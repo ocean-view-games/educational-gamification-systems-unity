@@ -1,0 +1,122 @@
+name: Validate
+
+# Structural checks that need no Unity licence, so they run on every fork and
+# pull request.
+#
+# The Play Mode suite is deliberately not run here. Driving a real Unity editor
+# on a runner requires an account password and licence file in repository
+# secrets, and GitHub withholds secrets from forked pull requests, so such a job
+# would fail permanently on external contributions. The suite is run locally
+# instead; see "Running the tests headlessly" in the README for the command.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON files
+        run: |
+          set -euo pipefail
+          # Samples~ is hidden from Unity but its asmdef still has to be valid JSON.
+          find . -name '*.asmdef' -o -name 'package.json' | while read -r file; do
+            python3 -m json.tool "$file" > /dev/null
+            echo "ok  $file"
+          done
+
+      - name: Check required package.json fields
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, sys
+
+          with open('package.json', encoding='utf-8') as handle:
+              package = json.load(handle)
+
+          required = ['name', 'version', 'displayName', 'description', 'unity']
+          missing = [field for field in required if not package.get(field)]
+          if missing:
+              sys.exit(f"package.json is missing required fields: {', '.join(missing)}")
+
+          name = package['name']
+          if not name.islower() or ' ' in name:
+              sys.exit(f"package name must be lowercase and space-free: {name}")
+
+          print(f"{name} {package['version']} targets Unity {package['unity']}")
+          PY
+
+      - name: Check declared samples exist
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, sys
+
+          with open('package.json', encoding='utf-8') as handle:
+              samples = json.load(handle).get('samples', [])
+
+          for sample in samples:
+              path = sample['path']
+              if not os.path.isdir(path):
+                  sys.exit(f"declared sample path does not exist: {path}")
+              print(f"ok  {sample['displayName']} -> {path}")
+
+          if not samples:
+              print("no samples declared")
+          PY
+
+      - name: Check .meta file coverage
+        run: |
+          set -euo pipefail
+          status=0
+
+          # Every asset Unity imports needs a .meta, or consuming projects get
+          # regenerated GUIDs and broken references on install.
+          while read -r asset; do
+            if [ ! -e "${asset}.meta" ]; then
+              echo "missing meta: $asset"
+              status=1
+            fi
+          done < <(find Runtime Editor Tests docs -type f ! -name '*.meta')
+
+          while read -r dir; do
+            if [ ! -e "${dir}.meta" ]; then
+              echo "missing meta: $dir"
+              status=1
+            fi
+          done < <(find Runtime Editor Tests docs -type d)
+
+          # Orphaned .meta files are just as damaging as missing ones.
+          while read -r meta; do
+            if [ ! -e "${meta%.meta}" ]; then
+              echo "orphaned meta: $meta"
+              status=1
+            fi
+          done < <(find . -path ./.git -prune -o -name '*.meta' -print)
+
+          if [ "$status" -eq 0 ]; then
+            echo "meta files consistent"
+          fi
+          exit "$status"
+
+      - name: Check Samples~ carries no .meta files
+        run: |
+          set -euo pipefail
+          # A tilde folder is invisible to Unity, so meta files there are stale noise
+          # that get imported with a fresh GUID when the sample is copied into Assets.
+          if find 'Samples~' -name '*.meta' -print -quit 2>/dev/null | grep -q .; then
+            echo "Samples~ must not contain .meta files"
+            exit 1
+          fi
+          echo "ok"

@@ -1,5 +1,9 @@
 # Educational Gamification Systems for Unity
 
+[![Validate](https://github.com/Ocean-View-Games/educational-gamification-systems-unity/actions/workflows/validate.yml/badge.svg)](https://github.com/Ocean-View-Games/educational-gamification-systems-unity/actions/workflows/validate.yml)
+[![Unity 2021.3+](https://img.shields.io/badge/Unity-2021.3%2B-black?logo=unity)](https://unity.com)
+[![Licence: MIT](https://img.shields.io/badge/Licence-MIT-blue.svg)](LICENSE)
+
 A collection of open-source C# utility scripts for building curriculum-aligned educational games in Unity. These systems handle learning outcome tracking and adaptive difficulty, covering the measurement layer that educational games need and entertainment titles do not. Built and maintained by [Ocean View Games](https://oceanviewgames.co.uk/services/educationalgames), a UK studio specialising in educational game development.
 
 ![The Classroom Simulation sample running: a simulated student answers questions across three curriculum objectives while difficulty adapts upward to match their ability](.github/media/classroom-simulation.gif)
@@ -135,6 +139,26 @@ When the package is installed from Git, add it to the consuming project's `Packa
 Embedded packages are already considered in development and do not need this entry.
 
 The test assembly is constrained to `UNITY_INCLUDE_TESTS`, so it compiles in this package's own development project and is excluded from consumer projects. No test dependency is added to `package.json`.
+
+### Running the tests headlessly
+
+The suite also runs without opening the Editor, which is how the results quoted above are produced:
+
+```
+Unity.exe -batchmode -nographics \
+  -projectPath <consuming-project> \
+  -runTests -testPlatform PlayMode \
+  -testResults results.xml \
+  -logFile unity.log
+```
+
+Point `-projectPath` at a project that lists this package in its `Packages/manifest.json` along with the `testables` entry above. Testing through a consuming project rather than embedded source exercises the package the way a studio would actually receive it.
+
+### Continuous integration
+
+[.github/workflows/validate.yml](.github/workflows/validate.yml) checks package metadata, assembly definition validity, declared sample paths, and `.meta` file consistency on every push and pull request. It needs no Unity licence, so it runs on forks and on pull requests from outside the organisation.
+
+The Play Mode suite is deliberately **not** run in CI. Doing so requires a Unity account password and licence file stored as repository secrets, which is a poor trade for a package this size — and because GitHub withholds secrets from forked pull requests, an outside contributor's PR would show a permanently failing check regardless. The tests are run locally against each release using the command above; the command is documented here so anyone can reproduce the result rather than take it on trust.
 
 ## Requirements
 
