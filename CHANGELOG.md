@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Minimum supported editor raised to Unity 6000.0.73f1** (from 2021.3). The package
+  was never verified on 2021.3; the suite is run against 6000.0.73f1 and 6000.3.22f1.
+  Nothing in the package obviously requires Unity 6, so earlier editors may well work,
+  but an untested version is not a supported one. Consumers on an editor older than
+  6000.0.73f1 will now see a compatibility warning from Package Manager.
+
 ### Added
 
 - **Classroom Simulation** sample, importable from the Package Manager. A simulated

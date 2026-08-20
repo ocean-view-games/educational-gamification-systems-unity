@@ -1,7 +1,7 @@
 # Educational Gamification Systems for Unity
 
 [![Validate](https://github.com/Ocean-View-Games/educational-gamification-systems-unity/actions/workflows/validate.yml/badge.svg)](https://github.com/Ocean-View-Games/educational-gamification-systems-unity/actions/workflows/validate.yml)
-[![Unity 2021.3+](https://img.shields.io/badge/Unity-2021.3%2B-black?logo=unity)](https://unity.com)
+[![Unity 6000.0.73f1+](https://img.shields.io/badge/Unity-6000.0.73f1%2B-black?logo=unity)](https://unity.com)
 [![Licence: MIT](https://img.shields.io/badge/Licence-MIT-blue.svg)](LICENSE)
 
 A collection of open-source C# utility scripts for building curriculum-aligned educational games in Unity. These systems handle learning outcome tracking and adaptive difficulty, covering the measurement layer that educational games need and entertainment titles do not. Built and maintained by [Ocean View Games](https://oceanviewgames.co.uk/services/educationalgames), a UK studio specialising in educational game development.
@@ -173,8 +173,10 @@ The Play Mode suite is deliberately **not** run in CI. Doing so requires a Unity
 
 ## Requirements
 
-- Unity 2021.3 LTS or later
+- Unity 6000.0.73f1 or later
 - No third-party dependencies
+
+The suite is run against 6000.0.73f1 and 6000.3.22f1 before each release. Earlier editors are not claimed rather than known broken: nothing in the package obviously needs Unity 6 — the whole editor-side API surface is `EditorGUI`, `EditorGUILayout`, and `JsonUtility`, and the C# 8 and 9 features it uses have been available since 2021.2 — but an untested version is not a supported one, so the manifest states what has actually been verified.
 
 ## Related Reading
 
