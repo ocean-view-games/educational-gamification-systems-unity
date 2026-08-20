@@ -2,11 +2,16 @@
 
 A collection of open-source C# utility scripts for building curriculum-aligned educational games in Unity. These systems handle learning outcome tracking and adaptive difficulty, covering the measurement layer that educational games need and entertainment titles do not. Built and maintained by [Ocean View Games](https://oceanviewgames.co.uk/services/educationalgames), a UK studio specialising in educational game development.
 
+![The Classroom Simulation sample running: a simulated student answers questions across three curriculum objectives while difficulty adapts upward to match their ability](.github/media/classroom-simulation.gif)
+
+*The included [Classroom Simulation sample](Samples~/ClassroomSimulation/): a capable student is pushed from Medium up to the Hard tier as the controller finds their level, while per-objective accuracy and mastery update live.*
+
 ## Features
 
 - **LearningOutcomeTracker**: tracks student attempts against curriculum-coded objectives (e.g. KS2.EN.R.3.1), calculates mastery levels, and generates structured reports for LMS export.
 - **AdaptiveDifficultyController**: dynamically adjusts game difficulty based on recent student performance, keeping learners in their zone of proximal development.
 - **Editor tooling**: a custom Editor window for viewing learning objectives, monitoring mastery progress during play mode, and exporting reports as JSON.
+- **Runnable sample**: a Classroom Simulation importable from the Package Manager, showing both systems working together with no scene setup.
 - **Architecture documentation**: detailed docs covering data flow, component interaction, and school deployment considerations.
 
 ## Installation
@@ -61,6 +66,16 @@ string reportJson = tracker.GenerateReportJson();
 ```
 
 4. Open the Editor window via **Ocean View Games > Learning Outcome Viewer** to inspect objectives and export reports during play mode.
+
+## Sample
+
+The package ships one importable sample, **Classroom Simulation**, available from **Window > Package Manager > Educational Gamification Systems > Samples**. It needs no scene setup: add the **Classroom Simulation Sample** component to an empty GameObject and press Play.
+
+A simulated student with a fixed latent ability answers questions across three curriculum objectives. Harder questions are answered correctly less often, so as the controller raises difficulty the observed accuracy falls, and the two settle into the band between the controller's decrease and increase thresholds. A capable student is pushed to the Hard tier and a struggling one is eased to Easy, both ending up answering roughly six questions in ten — which is the controller working, not failing.
+
+An on-screen readout shows accuracy, mastery level, and attempt count per objective alongside the live difficulty and tier. The full JSON report is written to the Console when the lesson ends.
+
+Full notes in [Samples~/ClassroomSimulation/README.md](Samples~/ClassroomSimulation/README.md).
 
 ## Architecture
 

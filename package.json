@@ -16,6 +16,13 @@
     "type": "git",
     "url": "https://github.com/Ocean-View-Games/educational-gamification-systems-unity.git"
   },
+  "samples": [
+    {
+      "displayName": "Classroom Simulation",
+      "description": "A simulated student answering across three curriculum objectives, with difficulty adapting to their ability in real time. No scene setup required.",
+      "path": "Samples~/ClassroomSimulation"
+    }
+  ],
   "keywords": [
     "education",
     "edtech",

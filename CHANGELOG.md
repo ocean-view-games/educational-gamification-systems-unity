@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Classroom Simulation** sample, importable from the Package Manager. A simulated
+  student answers across three curriculum objectives while an on-screen readout shows
+  accuracy, mastery level, and the difficulty the controller settles on. Requires no
+  scene setup or assets beyond a single script.
+
 ## [1.0.0] - 2026-08-20
 
 First public release. Earlier versions were internal and are not documented here.

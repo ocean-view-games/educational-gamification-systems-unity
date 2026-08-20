@@ -1,0 +1,16 @@
+{
+  "name": "OceanViewGames.EdTech.Samples",
+  "rootNamespace": "OceanViewGames.EdTech.Samples",
+  "references": [
+    "OceanViewGames.EdTech"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
